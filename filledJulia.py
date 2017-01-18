@@ -8,7 +8,8 @@ from tkinter import Tk, Canvas, PhotoImage, mainloop
 # basic variable assignment
 WIDTH, HEIGHT = 600, 600
 cutoff = 200
-zoom = 2 # the radius of the image in the complex plane
+zoom = 2 # the height of the image in the plane
+zoom = [zoom*(WIDTH/HEIGHT),zoom]
 focus = [0.55,0.35]
 centre = [0,0] # coordinates of the images centre in the complex plane
 
