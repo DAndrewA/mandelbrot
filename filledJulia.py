@@ -9,8 +9,8 @@ from tkinter import Tk, Canvas, PhotoImage, mainloop
 WIDTH, HEIGHT = 600, 600
 cutoff = 200
 zoom = 2 # the radius of the image in the complex plane
-focus = [0.45,0.35] # coordinates of the images centre in the complex plane
-centre = [0,0]
+focus = [0.55,0.35]
+centre = [0,0] # coordinates of the images centre in the complex plane
 
 # creates the canvas and image object for which the pixels can be edited
 app = Tk()
