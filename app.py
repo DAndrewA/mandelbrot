@@ -6,54 +6,53 @@ PALLETE = ["#ff0000","#ff3000","#ff4400","#ff5400","#ff6100","#ff6c00","#ff7700"
         "#611074","#660066","#7e0061","#92005b","#a40055","#b4004f","#c20048","#d00041","#dd0038","#e9002e","#f40020"]
 
 class Polynomial:
+    # order : highest order exponent of the natural numbers
     # coefficients : ordered array for the coefficients of each exponent (from ^1 to ^order)
-    # Note, each coefficient is a complex number, adn this can only perform natural exponents
-    def __init__(self,coefficients):
+    # Note, each coefficient is a real number, and this can only perform natural exponents
+    def __init__(self,order,coefficients):
+        self.order = order
         self.coefficients = coefficients
 
     # x : the number the equation is being solved for
     # c : the constant in the equation
-    def solve(self,x,c):
+    def solve(self,z,c):
         values = [c]
+        #powerValues = [z]
+
         for expo,coef in enumerate(self.coefficients):
-            #print("expo: ",expo)
-            #print("coef: ",coef)
             n = 0
             # a : new calculated value
             # p : placeholder for calculation
-            a,p = [1,1],[1,1]
+            a = z
             while n < expo:
                 '''
-                print("p: ",p)
-                print("p0: ",p[0])
+                print("expo: ",expo)
+                print("coef: ",coef)
+                print("n: ",n)
                 print("a: ",a)
-                print("a0: ",a[0])
-                print("a1: ",a[1])
-                print("x: ",x)
-                print("x0: ",x[0])
-                print("x1: ",x[1])
+                print("z: ",z)
+                print("\n")
+                '''
+                a = [(a[0] * z[0]) - (a[1] * z[1]),(a[0] * z[1]) + (a[1] * z[0])]
+
+                '''
+                print("a: ",a)
+                print("\n")
                 '''
 
-                p[0] = (a[0] * x[0]) - (a[1] * x[1])
-                p[1] = (a[0] * x[1]) + (a[1] * x[0])
-                a = p
                 n += 1
 
-            p[0] = (a[0] * coef[0]) - (a[1] * coef[1])
-            p[1] = (a[0] * coef[1]) + (a[1] * coef[0])
-            a = p
+            a = [a[0] * coef, a[1] * coef]
+            #print("a_fin: ",a)
             values.append(a)
 
         finalValue = [0,0]
+        #print(values)
         for v in values:
             finalValue[0] += v[0]
             finalValue[1] += v[1]
 
         return finalValue
-
-
-
-
 
 class Viewer:
     def createSet(self):
@@ -133,7 +132,7 @@ class Viewer:
         self.zoomFactor = zoomFactor
         self.cutoffScalar = cutoffScalar
         self.array = []
-        self.polynomial = Polynomial(polynomial)
+        self.polynomial = Polynomial(len(polynomial),polynomial)
 
         self.app = Tk()
         self.c = Canvas(self.app,height=self.HEIGHT,width=self.WIDTH)
@@ -202,7 +201,7 @@ def createMandelbrotFromPolynomial(o):
 
 #m = Viewer(600,600,200,2,[0,0])
 #j = Viewer(600,600,200,2,[0,0], mode=1,focus=[-0.835,-0.2321]) # Julia set
-p1 = Viewer(300,300,200,2,[0,0],mode=2,polynomial=[[0,0],[0,0],[2,0]]) # should produce mandelbrot set
-#p2 = Viewer(300,300,200,2,[0,0],mode=2,polynomial=[[1,0],[-2,0],[1,0]]) # based on polynomial x^3 -2x^2 + x + c
+p1 = Viewer(300,300,200,2,[0,0],mode=2,polynomial=[0,1.2]) # should produce mandelbrot set
+#p2 = Viewer(300,300,200,2,[0,0],mode=2,polynomial=[1,-2,1]) # based on polynomial x^3 -2x^2 + x + c
 
 mainloop()
