@@ -17,33 +17,19 @@ class Polynomial:
     # c : the constant in the equation
     def solve(self,z,c):
         values = [c]
-        #powerValues = [z]
+        powerValues = [z]
 
-        for expo,coef in enumerate(self.coefficients):
-            n = 0
-            # a : new calculated value
-            # p : placeholder for calculation
-            a = z
-            while n < expo:
-                '''
-                print("expo: ",expo)
-                print("coef: ",coef)
-                print("n: ",n)
-                print("a: ",a)
-                print("z: ",z)
-                print("\n")
-                '''
-                a = [(a[0] * z[0]) - (a[1] * z[1]),(a[0] * z[1]) + (a[1] * z[0])]
+        expo = 1
+        while expo < self.order:
+            a = powerValues[expo-1]
+            a = [(a[0] * z[0]) - (a[1] * z[1]),(a[0] * z[1]) + (a[1] * z[0])]
+            powerValues.append(a)
+            expo += 1
 
-                '''
-                print("a: ",a)
-                print("\n")
-                '''
-
-                n += 1
-
+        for i in range(self.order):
+            a = powerValues[i]
+            coef = self.coefficients[i]
             a = [a[0] * coef, a[1] * coef]
-            #print("a_fin: ",a)
             values.append(a)
 
         finalValue = [0,0]
@@ -201,7 +187,7 @@ def createMandelbrotFromPolynomial(o):
 
 #m = Viewer(600,600,200,2,[0,0])
 #j = Viewer(600,600,200,2,[0,0], mode=1,focus=[-0.835,-0.2321]) # Julia set
-p1 = Viewer(300,300,200,2,[0,0],mode=2,polynomial=[0,1.2]) # should produce mandelbrot set
-#p2 = Viewer(300,300,200,2,[0,0],mode=2,polynomial=[1,-2,1]) # based on polynomial x^3 -2x^2 + x + c
+#p1 = Viewer(300,300,200,2,[0,0],mode=2,polynomial=[-1,0,2]) # should produce mandelbrot set
+p2 = Viewer(300,300,150,2,[0,0],mode=2,polynomial=[1,1,1]) # based on polynomial x^3 -2x^2 + x + c
 
 mainloop()
