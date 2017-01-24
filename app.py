@@ -5,13 +5,66 @@ PALLETE = ["#ff0000","#ff3000","#ff4400","#ff5400","#ff6100","#ff6c00","#ff7700"
         "#c6ff00","#b4ff00","#a1ff00","#8cff00","#72ff00","#51ff00","#00ff00","#00f241","#00e55b","#00d770","#00c881","#00b890","#00a69e","#0092ab","#007bb6","#005ec2","#0033cc","#2030c4","#2e2ebc","#382bb4","#4128ab","#4824a1","#4f2097","#551c8d","#5b1781",
         "#611074","#660066","#7e0061","#92005b","#a40055","#b4004f","#c20048","#d00041","#dd0038","#e9002e","#f40020"]
 
+class Polynomial:
+    # coefficients : ordered array for the coefficients of each exponent (from ^1 to ^order)
+    # Note, each coefficient is a complex number, adn this can only perform natural exponents
+    def __init__(self,coefficients):
+        self.coefficients = coefficients
+
+    # x : the number the equation is being solved for
+    # c : the constant in the equation
+    def solve(self,x,c):
+        values = [c]
+        for expo,coef in enumerate(self.coefficients):
+            #print("expo: ",expo)
+            #print("coef: ",coef)
+            n = 0
+            # a : new calculated value
+            # p : placeholder for calculation
+            a,p = [1,1],[1,1]
+            while n < expo:
+                '''
+                print("p: ",p)
+                print("p0: ",p[0])
+                print("a: ",a)
+                print("a0: ",a[0])
+                print("a1: ",a[1])
+                print("x: ",x)
+                print("x0: ",x[0])
+                print("x1: ",x[1])
+                '''
+
+                p[0] = (a[0] * x[0]) - (a[1] * x[1])
+                p[1] = (a[0] * x[1]) + (a[1] * x[0])
+                a = p
+                n += 1
+
+            p[0] = (a[0] * coef[0]) - (a[1] * coef[1])
+            p[1] = (a[0] * coef[1]) + (a[1] * coef[0])
+            a = p
+            values.append(a)
+
+        finalValue = [0,0]
+        for v in values:
+            finalValue[0] += v[0]
+            finalValue[1] += v[1]
+
+        return finalValue
+
+
+
 
 
 class Viewer:
     def createSet(self):
         self.array = self.createEmpty()
+
         if self.mode == 0:
             array = createMandelbrot(self)
+        elif self.mode == 1:
+            array = createJulia(self)
+        elif self.mode == 2:
+            array = createMandelbrotFromPolynomial(self)
 
         self.drawImage()
 
@@ -20,9 +73,19 @@ class Viewer:
         incrementY = 2*self.span[1] / self.HEIGHT
         topLeft = [self.centre[0] - self.span[0], self.centre[1] - self.span[1]]
         positionClicked = [topLeft[0] + ((event.x//1)*incrementX), topLeft[1] + ((event.y//1)*incrementY)]
+
         self.centre = positionClicked
         self.span[0] = self.span[0] / self.zoomFactor
         self.span[1] = self.span[1] / self.zoomFactor
+        self.cutoff += self.cutoffScalar
+
+        '''
+        #can comment out
+        print("Centre at : " + str(self.centre[0]) + " " + str(self.centre[1]) + "i")
+        print("Span is : " + str(self.span[1])
+        print("Zoom at : x" + str(1/self.span[1]) + " zoom")
+        '''
+
         self.createSet()
 
     # creates the window for each individual image
@@ -57,8 +120,9 @@ class Viewer:
     # mode : 0 for mandelbrot, 1 for julia (optional, defaults to mandelbrot)
     # focus : optional for the focus of the julia set
     # zoomFactor : the factor by which clikcing on the image zooms it in by
+    # cutoffScalar : the numerical increase in the scalar for each zoom - it should be greater than 0 as a smaller area requires a higher definition in the set
     # polynomial : defaults to x^2 + c, the function that the program itterates over (TO BE ADDED)
-    def __init__(self,w,h,cutoff,span,centre,mode=0,focus=[0,0],zoomFactor=10):
+    def __init__(self,w,h,cutoff,span,centre,mode=0,focus=[0,0],zoomFactor=10, cutoffScalar=50,polynomial = [0,1]):
         self.WIDTH = w
         self.HEIGHT = h
         self.cutoff = cutoff
@@ -67,7 +131,9 @@ class Viewer:
         self.mode = mode
         self.focus = focus
         self.zoomFactor = zoomFactor
+        self.cutoffScalar = cutoffScalar
         self.array = []
+        self.polynomial = Polynomial(polynomial)
 
         self.app = Tk()
         self.c = Canvas(self.app,height=self.HEIGHT,width=self.WIDTH)
@@ -79,7 +145,7 @@ class Viewer:
 
         self.createSet()
 
-x
+
 # working based on the z -> z^2 + c equation
 def createMandelbrot(o):
     incrementX = 2*o.span[0] / o.WIDTH
@@ -99,7 +165,44 @@ def createMandelbrot(o):
             o.array[y][x] = n
     return o.array
 
-m = Viewer(600,600,200,2,[0,0])
+# working based on the z -> z^2 + c equation
+def createJulia(o):
+    incrementX = 2*o.span[0] / o.WIDTH
+    incrementY = 2*o.span[1] / o.HEIGHT
+    topLeft = [o.centre[0] - o.span[0], o.centre[1] - o.span[1]]
+    for x in range(o.WIDTH):
+        for y in range(o.HEIGHT):
+            c = o.focus
+            z = [topLeft[0] + x*incrementX,topLeft[1] + y*incrementY]
+            n = 0
+            while n < o.cutoff and (z[0]**2 + z[1]**2) < 4:
+                a = z[0]
+                b = z[1]
+                z = [a*a - b*b, 2*a*b]
+                z = [z[0] + c[0], z[1] + c[1]]
+                n += 1
+            o.array[y][x] = n
+    return o.array
 
+# creates a set based on the mandelbrot, but using different polynomials
+def createMandelbrotFromPolynomial(o):
+    incrementX = 2*o.span[0] / o.WIDTH
+    incrementY = 2*o.span[1] / o.HEIGHT
+    topLeft = [o.centre[0] - o.span[0], o.centre[1] - o.span[1]]
+    for x in range(o.WIDTH):
+        for y in range(o.HEIGHT):
+            c = [topLeft[0] + x*incrementX,topLeft[1] + y*incrementY]
+            z = [0,0]
+            n = 0
+            while n < o.cutoff and (z[0]**2 + z[1]**2) < 4:
+                z = o.polynomial.solve(z,c)
+                n += 1
+            o.array[y][x] = n
+    return o.array
+
+#m = Viewer(600,600,200,2,[0,0])
+#j = Viewer(600,600,200,2,[0,0], mode=1,focus=[-0.835,-0.2321]) # Julia set
+p1 = Viewer(300,300,200,2,[0,0],mode=2,polynomial=[[0,0],[0,0],[2,0]]) # should produce mandelbrot set
+#p2 = Viewer(300,300,200,2,[0,0],mode=2,polynomial=[[1,0],[-2,0],[1,0]]) # based on polynomial x^3 -2x^2 + x + c
 
 mainloop()
