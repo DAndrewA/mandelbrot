@@ -7,10 +7,10 @@ from tkinter import Tk, Canvas, PhotoImage, mainloop
 
 # basic variable assignment
 WIDTH, HEIGHT = 600, 600
-cutoff = 200
-zoom = 2 # the height of the image in the plane
+cutoff = 300
+zoom = 1 # the height of the image in the plane
 zoom = [zoom*(WIDTH/HEIGHT),zoom]
-focus = [0.55,0.35]
+focus = [-0.4,0.6]
 centre = [0,0] # coordinates of the images centre in the complex plane
 
 # creates the canvas and image object for which the pixels can be edited
@@ -29,9 +29,9 @@ for y in range(HEIGHT):
 
 # working based on the z -> z^2 + c equation
 def createFilledJulia(array,focus,centre,zoom,cutoff):
-    incrementX = 2*zoom / WIDTH
-    incrementY = 2*zoom / HEIGHT
-    topLeft = [centre[0] - zoom, centre[1] - zoom]
+    incrementX = 2*zoom[0] / WIDTH
+    incrementY = 2*zoom[1] / HEIGHT
+    topLeft = [centre[0] - zoom[0], centre[1] - zoom[1]]
     for x in range(WIDTH):
         for y in range(HEIGHT):
             c = focus

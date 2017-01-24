@@ -5,11 +5,11 @@ colourPallete = ["#ff0000","#ff3000","#ff4400","#ff5400","#ff6100","#ff6c00","#f
 from tkinter import Tk, Canvas, PhotoImage, mainloop
 
 # basic variable assignment
-WIDTH, HEIGHT = 700, 700
-cutoff = 300
-zoom = 0.005 # the height of the image in the plane
+WIDTH, HEIGHT = 300, 300
+cutoff = 1000
+zoom = 0.0000000000001 # the height of the image in the plane
 zoom = [zoom*(WIDTH/HEIGHT),zoom]
-centre = [0.001,0.6435] # coordinates of the images centre in the complex plane
+centre = [0.004,0.64370001] # coordinates of the images centre in the complex plane
 
 # creates the canvas and image object for which the pixels can be edited
 app = Tk()
