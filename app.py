@@ -41,6 +41,7 @@ class Polynomial:
         return finalValue
 
 class Viewer:
+    # calls the function that generates the number sets based on which mode is used
     def createSet(self):
         self.array = self.createEmpty()
 
@@ -53,6 +54,7 @@ class Viewer:
 
         self.drawImage()
 
+    # sets the image to redraw itself if the first mouse button is clicked
     def redraw(self,event):
         incrementX = 2*self.span[0] / self.WIDTH
         incrementY = 2*self.span[1] / self.HEIGHT
@@ -64,16 +66,20 @@ class Viewer:
         self.span[1] = self.span[1] / self.zoomFactor
         self.cutoff += self.cutoffScalar
 
-        '''
-        #can comment out
-        print("Centre at : " + str(self.centre[0]) + " " + str(self.centre[1]) + "i")
-        print("Span is : " + str(self.span[1])
-        print("Zoom at : x" + str(1/self.span[1]) + " zoom")
-        '''
-
         self.createSet()
 
-    # creates the window for each individual image
+    # logs the current image's data in the console
+    def logData(self,event):
+        print("\n\n\n")
+        print("mode : " + str(self.mode))
+        print("centre : " + str(self.centre[0]) + " " + str(self.centre[1]) + "i")
+        print("span : " + str(self.span[1]))
+        print("cutoff : " + str(self.cutoff))
+        print("focus : " + str(self.focus))
+        print("\n")
+
+
+    # draws the image onto the pixelimage, pixel by pixel
     def drawImage(self):
         for y in range(len(self.array)):
             for x in range(len(self.array[y])):
@@ -123,6 +129,7 @@ class Viewer:
         self.app = Tk()
         self.c = Canvas(self.app,height=self.HEIGHT,width=self.WIDTH)
         self.c.bind("<Button-1>",self.redraw)
+        self.c.bind("<Button-2>",self.logData)
         self.c.pack()
 
         self.img = PhotoImage(width=self.WIDTH, height=self.HEIGHT)
@@ -188,6 +195,6 @@ def createMandelbrotFromPolynomial(o):
 #m = Viewer(600,600,200,2,[0,0])
 #j = Viewer(600,600,200,2,[0,0], mode=1,focus=[-0.835,-0.2321]) # Julia set
 #p1 = Viewer(300,300,200,2,[0,0],mode=2,polynomial=[-1,0,2]) # should produce mandelbrot set
-p2 = Viewer(300,300,150,2,[0,0],mode=2,polynomial=[1,1,1]) # based on polynomial x^3 -2x^2 + x + c
+p2 = Viewer(300,300,150,2,[0,0],mode=2,polynomial=[0,0,0,0,0,0,0,3]) # based on polynomial x^3 -2x^2 + x + c
 
 mainloop()
